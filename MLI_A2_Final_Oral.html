@@ -63,6 +63,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--light);min-height:
 .platform-note{margin-top:16px;background:#e8f7fd;border:1.5px solid var(--blue);color:#1a6a8a;border-radius:10px;padding:11px 15px;font-size:0.85rem;line-height:1.6;}
 .fs-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid #d0dff0;background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--navy);transition:all 0.2s;flex-shrink:0;}
 .fs-btn:hover{background:var(--blue-light);border-color:var(--blue);}
+.size-ctrl{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.size-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid #d0dff0;background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;color:var(--navy);transition:all 0.2s;padding:0;line-height:1;}
+.size-btn:hover{background:var(--blue-light);border-color:var(--blue);}
+.size-val{font-size:0.68rem;font-weight:700;color:var(--gray);min-width:32px;text-align:center;}
+@media print{.size-ctrl{display:none!important;}}
 @media (max-width:560px){
   #header{flex-wrap:wrap;gap:8px;}
   .header-title{flex:1 1 auto;font-size:0.9rem;}
@@ -239,7 +244,7 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <button class="mode-btn teacher" onclick="setMode('teacher')">🎓 Examinateur</button>
       <button class="mode-btn platform" onclick="setMode('platform')">📝 CO · CE · EE</button>
     </div>
-    <button class="fs-btn" id="fs-btn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
+    <div class="size-ctrl" title="Taille du texte"><button class="size-btn" onclick="setContentZoom(-1)">A−</button><span class="size-val" id="szv">100%</span><button class="size-btn" onclick="setContentZoom(1)">A+</button></div><button class="fs-btn" id="fs-btn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
   </div>
 </div>
 
@@ -739,6 +744,26 @@ window.resetAllTimers = function() {
     if (b) { b.textContent = '▶ Démarrer'; b.className = 'timer-start-btn'; }
   });
 };
+
+let contentZoom=1;
+function applyContentZoom(){
+  ['student-view','teacher-view','platform-view'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.style.zoom=contentZoom;
+  });
+  var v=document.getElementById('szv');
+  if(v) v.textContent=Math.round(contentZoom*100)+'%';
+}
+function setContentZoom(d){
+  contentZoom=Math.min(1.6,Math.max(0.7,Math.round((contentZoom+d*0.1)*10)/10));
+  applyContentZoom();
+}
+document.addEventListener('keydown',function(e){
+  if(e.target&&(e.target.isContentEditable||e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;
+  if(e.key==='+'||e.key==='='){e.preventDefault();setContentZoom(1);}
+  if(e.key==='-'||e.key==='_'){e.preventDefault();setContentZoom(-1);}
+  if(e.key==='0'){e.preventDefault();contentZoom=1;applyContentZoom();}
+});
 </script>
 </body>
 </html>
