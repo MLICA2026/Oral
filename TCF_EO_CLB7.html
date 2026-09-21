@@ -214,6 +214,7 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
 .score-final{width:100px;padding:6px 8px;border:2px solid #cce0f0;border-radius:9px;font-size:1.3rem;font-weight:800;color:var(--navy);text-align:center;font-family:inherit;}
 .score-final:focus{outline:none;border-color:var(--blue);}
 .eval-note{font-size:0.8rem;color:var(--gray);margin-top:8px;line-height:1.5;}
+.score-row{display:flex;align-items:center;gap:12px;margin-top:8px;background:#f0f6ff;border:1.5px solid #b9d4ef;border-radius:12px;padding:12px 16px;width:fit-content;}
 
 /* -- CLB PASS CHECKBOXES -- */
 .clb-checks{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
@@ -494,13 +495,9 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="t-section-title">Évaluation &amp; décision de passage</div>
     </div>
     <div class="t-section-body">
-      <div class="info-box blue">Pour chaque tâche ci-dessus, sélectionnez le <strong>niveau observé</strong> (A1 · A2 · B1 · B2) sur les quatre critères. Le niveau global et le NCLC estimé se calculent automatiquement.</div>
-      <div class="eval-summary">
-        <div class="eval-cell"><span class="eval-lbl">Niveau global</span><span class="eval-val" id="overall-level">—</span></div>
-        <div class="eval-cell"><span class="eval-lbl">NCLC estimé</span><span class="eval-val" id="suggested-nclc">—</span></div>
-        <div class="eval-cell"><span class="eval-lbl">Note TCF / 20</span><input class="score-final" id="final-score" type="number" min="0" max="20" step="0.5" placeholder="—" oninput="this.dataset.touched='1';updateTotal();"></div>
-      </div>
-      <div class="eval-note">La note / 20 est proposée d'après le niveau global (modifiable à la main). Elle situe l'étudiant(e) sur l'échelle NCLC ci-dessous.</div>
+      <div class="info-box blue">Pour chaque tâche ci-dessus, sélectionnez le <strong>niveau observé</strong> (A1 · A2 · B1 · B2) sur les quatre critères, puis saisissez la note globale.</div>
+      <div class="score-row"><span class="eval-lbl">Note TCF / 20</span><input class="score-final" id="final-score" type="number" min="0" max="20" step="0.5" placeholder="—" oninput="updateTotal();"></div>
+      <div class="eval-note">La note situe l'étudiant(e) sur l'échelle NCLC ci-dessous.</div>
       <div class="rubric-label" style="margin-top:16px">🎓 Décision de passage — cocher les niveaux acquis</div>
       <div class="clb-checks">
         <label class="clb-check" data-lvl="5"><input type="checkbox" onchange="syncClb()"><span>Réussi NCLC5</span></label>
@@ -623,10 +620,6 @@ var TASKS = ['t1','t2','t3'];
 var TARGET_LVL = '7';
 var TARGET_NAME = 'CLB7';
 var LEVEL_ORDER = ['A1','A2','B1','B2'];
-// Niveau global -> NCLC estimé (correspondance CECRL/NCLC du guide MLI) — modifiable
-var LEVEL_TO_NCLC  = { A1:'4', A2:'4–5', B1:'5–6', B2:'7' };
-// Niveau global -> note /20 proposée (milieu de la bande NCLC visée) — modifiable
-var LEVEL_TO_SCORE = { A1:4.5, A2:6, B1:8, B2:10.5 };
 var levelState = {};
 
 function selectLevel(btn){
@@ -648,26 +641,11 @@ function taskIdx(task){
 function idxToLevel(i){ return LEVEL_ORDER[Math.max(0,Math.min(3,Math.round(i)))]; }
 
 function updateEval(){
-  var idxs=[];
   TASKS.forEach(function(t){
     var i=taskIdx(t);
     var badge=document.getElementById('lvl-'+t);
     if(badge) badge.textContent = (i==null)?'—':idxToLevel(i);
-    if(i!=null) idxs.push(i);
   });
-  var ol=document.getElementById('overall-level');
-  var sn=document.getElementById('suggested-nclc');
-  var fs=document.getElementById('final-score');
-  if(idxs.length){
-    var avg=idxs.reduce(function(a,b){return a+b;},0)/idxs.length;
-    var lvl=idxToLevel(avg);
-    ol.textContent=lvl;
-    sn.textContent='NCLC '+LEVEL_TO_NCLC[lvl];
-    if(fs && !fs.dataset.touched){ fs.value=LEVEL_TO_SCORE[lvl]; }
-  } else {
-    ol.textContent='—'; sn.textContent='—';
-    if(fs && !fs.dataset.touched){ fs.value=''; }
-  }
   updateTotal();
 }
 
@@ -709,11 +687,9 @@ function clearEval(){
   levelState={};
   document.querySelectorAll('.lvl-btn.active').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.t-lvl-badge').forEach(function(b){ b.textContent='—'; });
-  var fs=document.getElementById('final-score'); if(fs){ fs.value=''; delete fs.dataset.touched; }
+  var fs=document.getElementById('final-score'); if(fs){ fs.value=''; }
   document.querySelectorAll('.clb-check input').forEach(function(c){ c.checked=false; });
   syncClb();
-  var ol=document.getElementById('overall-level'); if(ol) ol.textContent='—';
-  var sn=document.getElementById('suggested-nclc'); if(sn) sn.textContent='—';
   updateTotal();
 }
 
