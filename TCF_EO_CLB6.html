@@ -191,6 +191,50 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
 .timer-start-btn.running{background:#e07b00;}
 .timer-start-btn.done{background:#aaa;cursor:default;}
 .timer-label{font-size:0.78rem;color:var(--gray);flex:1;}
+
+/* -- CEFR LEVEL GRID -- */
+.lvl-grid{border:1.5px solid #e0e8f2;border-radius:12px;overflow:hidden;}
+.lvl-head{display:flex;justify-content:space-between;background:#eef3fa;padding:8px 14px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--navy);font-weight:700;}
+.lvl-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid #eef2f8;flex-wrap:wrap;}
+.lvl-row:first-of-type{border-top:none;}
+.lvl-crit{flex:1;min-width:170px;font-size:0.88rem;color:#333;}
+.lvl-btns{display:flex;gap:5px;flex-shrink:0;}
+.lvl-btn{min-width:38px;padding:6px 10px;border:1.5px solid #cfe0f0;border-radius:9px;background:var(--white);color:var(--gray);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.lvl-btn:hover{border-color:var(--blue);}
+.lvl-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.lvl-btn.na{min-width:30px;padding:6px 8px;}
+.lvl-btn.na.active{background:#9aa7b8;border-color:#9aa7b8;}
+.t-lvl-badge{margin-left:auto;min-width:44px;text-align:center;background:var(--green-light);border:1.5px solid var(--green);color:var(--green-dark);border-radius:12px;padding:3px 12px;font-size:0.82rem;font-weight:800;}
+
+/* -- EVALUATION SUMMARY -- */
+.eval-summary{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;}
+.eval-cell{flex:1;min-width:130px;background:#f0f6ff;border:1.5px solid #b9d4ef;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
+.eval-lbl{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--blue-dark);font-weight:700;}
+.eval-val{font-size:1.5rem;font-weight:800;color:var(--navy);line-height:1;}
+.score-final{width:100px;padding:6px 8px;border:2px solid #cce0f0;border-radius:9px;font-size:1.3rem;font-weight:800;color:var(--navy);text-align:center;font-family:inherit;}
+.score-final:focus{outline:none;border-color:var(--blue);}
+.eval-note{font-size:0.8rem;color:var(--gray);margin-top:8px;line-height:1.5;}
+
+/* -- CLB PASS CHECKBOXES -- */
+.clb-checks{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.clb-check{flex:1;min-width:130px;display:flex;align-items:center;gap:9px;padding:12px 14px;border:2px solid #dbe6f3;border-radius:12px;cursor:pointer;font-weight:700;color:var(--gray);background:var(--white);transition:all 0.15s;}
+.clb-check input{width:20px;height:20px;accent-color:var(--green);cursor:pointer;}
+.clb-check.own{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);}
+.clb-check.on{border-color:var(--green);background:var(--green-light);color:var(--green-dark);}
+.clb-check.on span::before{content:"✓ ";}
+
+@media print{
+  .lvl-btn{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:2px 6px;min-width:26px;font-size:0.72rem;}
+  .lvl-btn:not(.active){display:none;}
+  .lvl-btn.active{border:1px solid #333;}
+  .lvl-row .lvl-btns:empty::after{content:"–";color:#999;}
+  .clb-check{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .clb-check input{display:none;}
+  .clb-check:not(.on){opacity:0.4;}
+  .eval-cell,.eval-summary .eval-cell{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #section-eval{page-break-inside:avoid;}
+}
+
 </style>
 </head>
 <body>
@@ -376,21 +420,18 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="t-num">1</div>
       <div class="t-section-title">Entretien dirigé — Présentation</div>
       <span class="t-section-time">⏱ ~2 min</span>
-      <div class="t-pts blue">/5</div>
+      <div class="t-lvl-badge" id="lvl-t1">—</div>
     </div>
     <div class="t-section-body">
       <div class="info-box blue">📌 L'étudiant(e) se présente librement. Posez des questions de suivi si un domaine n'est pas abordé.</div>
       <div class="rubric-label">📋 Critères d'évaluation (référence TCF)</div>
-      <table class="rubric-table">
-        <thead><tr><th>Critère</th><th style="width:75px;text-align:center">Barème</th><th style="width:105px;text-align:center">Note</th></tr></thead>
-        <tbody>
-          <tr><td>Réalisation de la tâche — présentation claire et pertinente</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t1" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Lexique — vocabulaire personnel varié</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t1" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr><td>Morphosyntaxe — structures correctes</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t1" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr><td>Phonologie — prononciation</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t1" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr class="sub-row"><td colspan="2">Sous-total T1</td><td class="score-cell"><strong id="sub-t1">–</strong><span class="score-max"> /5</span></td></tr>
-        </tbody>
-      </table>
+      <div class="lvl-grid">
+        <div class="lvl-head"><span>Critère</span><span>Niveau observé</span></div>
+        <div class="lvl-row"><span class="lvl-crit">Respect de la consigne &amp; réalisation des tâches</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t1" data-crit="c1" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c1" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c1" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c1" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c1" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Cohérence &amp; cohésion</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t1" data-crit="c2" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c2" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c2" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c2" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c2" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Lexique (étendue du vocabulaire)</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t1" data-crit="c3" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c3" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c3" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c3" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c3" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Morphosyntaxe &amp; phonologie</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t1" data-crit="c4" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c4" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c4" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c4" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t1" data-crit="c4" data-lvl="B2">B2</button></div></div>
+      </div>
       <textarea class="notes" placeholder="Observations T1…"></textarea>
     </div>
   </div>
@@ -401,7 +442,7 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="t-num">2</div>
       <div class="t-section-title">Interaction — Obtenir des informations</div>
       <span class="t-section-time">⏱ 2 min prép. + 3 min 30</span>
-      <div class="t-pts gold">/7</div>
+      <div class="t-lvl-badge" id="lvl-t2">—</div>
     </div>
     <div class="t-section-body">
       <div class="info-box gold">🎭 <strong>Vous jouez le producteur de fruits et légumes bio</strong> qui vend en direct aux particuliers. Répondez aux questions de l'étudiant(e) et relancez si besoin (prix, produits, livraison…).</div>
@@ -409,17 +450,13 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="q-prompts"><span class="q-prompt">💲 Prix</span><span class="q-prompt">🥬 Produits</span><span class="q-prompt">🚚 Livraison</span><span class="q-prompt">📦 Quantités</span><span class="q-prompt">🌱 Bio / provenance</span><span class="q-prompt">💳 Paiement</span></div>
       <div class="rubric-divider"></div>
       <div class="rubric-label">📋 Critères d'évaluation (référence TCF)</div>
-      <table class="rubric-table">
-        <thead><tr><th>Critère</th><th style="width:75px;text-align:center">Barème</th><th style="width:105px;text-align:center">Note</th></tr></thead>
-        <tbody>
-          <tr><td>Réalisation de la tâche — questions pertinentes et variées</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t2" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Interaction — initie, relance, maintient et conclut l'échange</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t2" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Lexique — vocabulaire adapté au thème</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t2" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr><td>Morphosyntaxe — formes interrogatives correctes</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t2" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr><td>Phonologie — prononciation et intonation</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t2" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr class="sub-row"><td colspan="2">Sous-total T2</td><td class="score-cell"><strong id="sub-t2">–</strong><span class="score-max"> /7</span></td></tr>
-        </tbody>
-      </table>
+      <div class="lvl-grid">
+        <div class="lvl-head"><span>Critère</span><span>Niveau observé</span></div>
+        <div class="lvl-row"><span class="lvl-crit">Respect de la consigne &amp; réalisation des tâches</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t2" data-crit="c1" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c1" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c1" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c1" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c1" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Cohérence &amp; cohésion</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t2" data-crit="c2" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c2" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c2" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c2" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c2" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Lexique (étendue du vocabulaire)</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t2" data-crit="c3" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c3" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c3" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c3" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c3" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Morphosyntaxe &amp; phonologie</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t2" data-crit="c4" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c4" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c4" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c4" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t2" data-crit="c4" data-lvl="B2">B2</button></div></div>
+      </div>
       <textarea class="notes" placeholder="Observations T2…"></textarea>
     </div>
   </div>
@@ -430,7 +467,7 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="t-num">3</div>
       <div class="t-section-title">Point de vue — Expression argumentée</div>
       <span class="t-section-time">⏱ 4 min 30</span>
-      <div class="t-pts purple">/8</div>
+      <div class="t-lvl-badge" id="lvl-t3">—</div>
     </div>
     <div class="t-section-body">
       <div class="info-box purple">🗣 <strong>Monologue sans préparation.</strong> L'étudiant(e) prend position sur l'affirmation, développe 2–3 arguments avec des exemples et conclut. Vous pouvez poser une question de relance à la fin.</div>
@@ -438,18 +475,39 @@ textarea.notes:focus{outline:none;border-color:var(--blue);}
       <div class="info-box purple" style="font-style:italic;">« La diversité au sein des écoles favorise-t-elle l'épanouissement de tous les élèves ? Êtes-vous d'accord avec cette affirmation ? »</div>
       <div class="rubric-divider"></div>
       <div class="rubric-label">📋 Critères d'évaluation (référence TCF)</div>
-      <table class="rubric-table">
-        <thead><tr><th>Critère</th><th style="width:75px;text-align:center">Barème</th><th style="width:105px;text-align:center">Note</th></tr></thead>
-        <tbody>
-          <tr><td>Réalisation de la tâche — prend position et tient la durée</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t3" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Cohérence et argumentation — idées organisées, exemples</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t3" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Lexique — étendue et précision (connecteurs, nuances)</td><td style="text-align:center">2 pts</td><td class="score-cell"><input class="score-input" data-task="t3" type="number" min="0" max="2" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/2</span></td></tr>
-          <tr><td>Morphosyntaxe — structures variées et correctes</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t3" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr><td>Phonologie — prononciation, intonation, fluidité</td><td style="text-align:center">1 pt</td><td class="score-cell"><input class="score-input" data-task="t3" type="number" min="0" max="1" step="0.5" placeholder="–" oninput="updateTotal()"><span class="score-max">/1</span></td></tr>
-          <tr class="sub-row"><td colspan="2">Sous-total T3</td><td class="score-cell"><strong id="sub-t3">–</strong><span class="score-max"> /8</span></td></tr>
-        </tbody>
-      </table>
+      <div class="lvl-grid">
+        <div class="lvl-head"><span>Critère</span><span>Niveau observé</span></div>
+        <div class="lvl-row"><span class="lvl-crit">Respect de la consigne &amp; réalisation des tâches</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t3" data-crit="c1" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c1" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c1" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c1" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c1" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Cohérence &amp; cohésion</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t3" data-crit="c2" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c2" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c2" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c2" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c2" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Lexique (étendue du vocabulaire)</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t3" data-crit="c3" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c3" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c3" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c3" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c3" data-lvl="B2">B2</button></div></div>
+        <div class="lvl-row"><span class="lvl-crit">Morphosyntaxe &amp; phonologie</span><div class="lvl-btns"><button class="lvl-btn na" onclick="selectLevel(this)" data-task="t3" data-crit="c4" data-lvl="">–</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c4" data-lvl="A1">A1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c4" data-lvl="A2">A2</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c4" data-lvl="B1">B1</button><button class="lvl-btn" onclick="selectLevel(this)" data-task="t3" data-crit="c4" data-lvl="B2">B2</button></div></div>
+      </div>
       <textarea class="notes" placeholder="Observations T3…"></textarea>
+    </div>
+  </div>
+
+
+  <!-- ÉVALUATION & DÉCISION -->
+  <div class="t-section" id="section-eval">
+    <div class="t-section-header" style="background:#2a9fd4;">
+      <div class="t-num">✅</div>
+      <div class="t-section-title">Évaluation &amp; décision de passage</div>
+    </div>
+    <div class="t-section-body">
+      <div class="info-box blue">Pour chaque tâche ci-dessus, sélectionnez le <strong>niveau observé</strong> (A1 · A2 · B1 · B2) sur les quatre critères. Le niveau global et le NCLC estimé se calculent automatiquement.</div>
+      <div class="eval-summary">
+        <div class="eval-cell"><span class="eval-lbl">Niveau global</span><span class="eval-val" id="overall-level">—</span></div>
+        <div class="eval-cell"><span class="eval-lbl">NCLC estimé</span><span class="eval-val" id="suggested-nclc">—</span></div>
+        <div class="eval-cell"><span class="eval-lbl">Note TCF / 20</span><input class="score-final" id="final-score" type="number" min="0" max="20" step="0.5" placeholder="—" oninput="this.dataset.touched='1';updateTotal();"></div>
+      </div>
+      <div class="eval-note">La note / 20 est proposée d'après le niveau global (modifiable à la main). Elle situe l'étudiant(e) sur l'échelle NCLC ci-dessous.</div>
+      <div class="rubric-label" style="margin-top:16px">🎓 Décision de passage — cocher les niveaux acquis</div>
+      <div class="clb-checks">
+        <label class="clb-check" data-lvl="5"><input type="checkbox" onchange="syncClb()"><span>Réussi NCLC5</span></label>
+        <label class="clb-check" data-lvl="6"><input type="checkbox" onchange="syncClb()"><span>Réussi NCLC6</span></label>
+        <label class="clb-check" data-lvl="7"><input type="checkbox" onchange="syncClb()"><span>Réussi NCLC7</span></label>
+      </div>
+      <div class="eval-note">Cocher = l'étudiant(e) atteint ce niveau et peut passer à l'étape suivante.</div>
     </div>
   </div>
 
@@ -561,48 +619,111 @@ function setMode(mode) {
   else{ sv.style.display='none'; nb.style.display='none'; tv.style.display='block'; tt.style.display='flex'; }
 }
 
-function sumTask(task) {
-  let s=0;
-  document.querySelectorAll(`.score-input[data-task="${task}"]`).forEach(inp=>{ const v=parseFloat(inp.value); if(!isNaN(v)) s+=v; });
-  return s;
+var TASKS = ['t1','t2','t3'];
+var TARGET_LVL = '6';
+var TARGET_NAME = 'CLB6';
+var LEVEL_ORDER = ['A1','A2','B1','B2'];
+// Niveau global -> NCLC estimé (correspondance CECRL/NCLC du guide MLI) — modifiable
+var LEVEL_TO_NCLC  = { A1:'4', A2:'4–5', B1:'5–6', B2:'7' };
+// Niveau global -> note /20 proposée (milieu de la bande NCLC visée) — modifiable
+var LEVEL_TO_SCORE = { A1:4.5, A2:6, B1:8, B2:10.5 };
+var levelState = {};
+
+function selectLevel(btn){
+  var t=btn.dataset.task, c=btn.dataset.crit, lv=btn.dataset.lvl;
+  levelState[t+'-'+c] = lv;
+  btn.parentNode.querySelectorAll('.lvl-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateEval();
 }
 
-// TCF EO (/20) -> NCLC band, from official TCF Canada table
+function taskIdx(task){
+  var sum=0,n=0;
+  ['c1','c2','c3','c4'].forEach(function(c){
+    var v=levelState[task+'-'+c];
+    if(v){ sum+=LEVEL_ORDER.indexOf(v); n++; }
+  });
+  return n ? sum/n : null;
+}
+function idxToLevel(i){ return LEVEL_ORDER[Math.max(0,Math.min(3,Math.round(i)))]; }
+
+function updateEval(){
+  var idxs=[];
+  TASKS.forEach(function(t){
+    var i=taskIdx(t);
+    var badge=document.getElementById('lvl-'+t);
+    if(badge) badge.textContent = (i==null)?'—':idxToLevel(i);
+    if(i!=null) idxs.push(i);
+  });
+  var ol=document.getElementById('overall-level');
+  var sn=document.getElementById('suggested-nclc');
+  var fs=document.getElementById('final-score');
+  if(idxs.length){
+    var avg=idxs.reduce(function(a,b){return a+b;},0)/idxs.length;
+    var lvl=idxToLevel(avg);
+    ol.textContent=lvl;
+    sn.textContent='NCLC '+LEVEL_TO_NCLC[lvl];
+    if(fs && !fs.dataset.touched){ fs.value=LEVEL_TO_SCORE[lvl]; }
+  } else {
+    ol.textContent='—'; sn.textContent='—';
+    if(fs && !fs.dataset.touched){ fs.value=''; }
+  }
+  updateTotal();
+}
+
 function nclcBand(total){
-  if(total>=16) return {lvl:'10',  label:'NCLC 10 et plus'};
-  if(total>=14) return {lvl:'9',   label:'NCLC 9'};
-  if(total>=12) return {lvl:'8',   label:'NCLC 8'};
-  if(total>=10) return {lvl:'7',   label:'NCLC 7'};
-  if(total>=7)  return {lvl:'6',   label:'NCLC 6'};
-  if(total>=6)  return {lvl:'5',   label:'NCLC 5'};
-  if(total>=4)  return {lvl:'4',   label:'NCLC 4'};
+  if(total>=16) return {lvl:'10', label:'NCLC 10 et plus'};
+  if(total>=14) return {lvl:'9',  label:'NCLC 9'};
+  if(total>=12) return {lvl:'8',  label:'NCLC 8'};
+  if(total>=10) return {lvl:'7',  label:'NCLC 7'};
+  if(total>=7)  return {lvl:'6',  label:'NCLC 6'};
+  if(total>=6)  return {lvl:'5',  label:'NCLC 5'};
+  if(total>=4)  return {lvl:'4',  label:'NCLC 4'};
   return {lvl:'-', label:'< NCLC 4'};
 }
 
-var TARGET_LVL = '6';   // NCLC level number this exam targets
-var TARGET_NAME = 'CLB6'; // e.g. CLB6
-
-function updateTotal() {
-  ['t1','t2','t3'].forEach(task=>{
-    let s=0,has=false;
-    document.querySelectorAll(`.score-input[data-task="${task}"]`).forEach(inp=>{ const v=parseFloat(inp.value); if(!isNaN(v)){ s+=v; has=true; } });
-    const el=document.getElementById('sub-'+task); if(el) el.textContent=has?s:'–';
-  });
-  const total=sumTask('t1')+sumTask('t2')+sumTask('t3');
-  const hasAny=total>0;
-  document.getElementById('total-val').textContent=hasAny?total:'–';
-  let badge='';
-  document.querySelectorAll('#nclc-table tr[data-lvl]').forEach(r=>r.classList.remove('reached'));
-  if(hasAny){
-    const b=nclcBand(total);
-    const reachedTarget = parseInt(b.lvl,10) >= parseInt(TARGET_LVL,10);
-    const target = reachedTarget ? (' · 🎯 objectif '+TARGET_NAME+' atteint') : (' · objectif '+TARGET_NAME+' non atteint');
-    badge = '≈ '+b.label+target;
-    const row=document.querySelector('#nclc-table tr[data-lvl="'+b.lvl+'"]');
+function updateTotal(){
+  var fs=document.getElementById('final-score');
+  var total=(fs && fs.value!=='')?parseFloat(fs.value):null;
+  document.getElementById('total-val').textContent=(total==null||isNaN(total))?'–':total;
+  document.querySelectorAll('#nclc-table tr[data-lvl]').forEach(function(r){ r.classList.remove('reached'); });
+  var badge='';
+  if(total!=null && !isNaN(total)){
+    var b=nclcBand(total);
+    var reached=parseInt(b.lvl,10)>=parseInt(TARGET_LVL,10);
+    badge='≈ '+b.label+(reached?(' · 🎯 objectif '+TARGET_NAME+' atteint'):(' · objectif '+TARGET_NAME+' non atteint'));
+    var row=document.querySelector('#nclc-table tr[data-lvl="'+b.lvl+'"]');
     if(row) row.classList.add('reached');
   }
   document.getElementById('grade-badge').textContent=badge;
 }
+
+function syncClb(){
+  document.querySelectorAll('.clb-check').forEach(function(el){
+    var box=el.querySelector('input');
+    el.classList.toggle('on', box.checked);
+  });
+}
+
+function clearEval(){
+  levelState={};
+  document.querySelectorAll('.lvl-btn.active').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.t-lvl-badge').forEach(function(b){ b.textContent='—'; });
+  var fs=document.getElementById('final-score'); if(fs){ fs.value=''; delete fs.dataset.touched; }
+  document.querySelectorAll('.clb-check input').forEach(function(c){ c.checked=false; });
+  syncClb();
+  var ol=document.getElementById('overall-level'); if(ol) ol.textContent='—';
+  var sn=document.getElementById('suggested-nclc'); if(sn) sn.textContent='—';
+  updateTotal();
+}
+
+// mark this exam's own CLB gate + highlight its NCLC row
+(function(){
+  var own=document.querySelector('.clb-check[data-lvl="'+TARGET_LVL+'"]');
+  if(own) own.classList.add('own');
+  var row=document.querySelector('#nclc-table tr[data-lvl="'+TARGET_LVL+'"]');
+  if(row) row.classList.add('target');
+})();
 
 function finExam() {
   setMode('teacher');
@@ -634,7 +755,7 @@ function exportPDF() {
 }
 
 function fullReset() {
-  document.querySelectorAll('.score-input').forEach(i=>i.value='');
+  clearEval();
   document.querySelectorAll('textarea.notes').forEach(t=>t.value='');
   document.getElementById('field-name').value='';
   document.getElementById('field-date').valueAsDate=new Date();
@@ -667,6 +788,7 @@ document.querySelectorAll('#nclc-table tr[data-lvl]').forEach(function(r){
 
 document.getElementById('field-date').valueAsDate=new Date();
 showCurrent();
+syncClb();updateEval();
 
 // -- TIMER --
 var timerState = {};
